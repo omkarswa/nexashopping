@@ -23,7 +23,7 @@ public class EmailService {
             message.setTo(to);
             message.setSubject(subject);
             message.setText(text);
-            message.setFrom(fromEmail);
+            message.setFrom("Nexashop <" + fromEmail + ">");
             mailSender.send(message);
             System.out.println("Email sent to " + to);
         } catch (Exception e) {

@@ -17,10 +17,16 @@ public class SellerController {
 
     private final SellerRepository sellerRepository;
     private final com.nexashop.backend.service.EmailService emailService;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private final com.nexashop.backend.security.JwtUtils jwtUtils;
 
-    public SellerController(SellerRepository sellerRepository, com.nexashop.backend.service.EmailService emailService) {
+    public SellerController(SellerRepository sellerRepository, com.nexashop.backend.service.EmailService emailService,
+            org.springframework.security.crypto.password.PasswordEncoder passwordEncoder,
+            com.nexashop.backend.security.JwtUtils jwtUtils) {
         this.sellerRepository = sellerRepository;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtils = jwtUtils;
     }
 
     @Operation(summary = "Register a new Seller", description = "Creates a new seller account with PENDING_APPROVAL status and sends a verification email.")
@@ -37,7 +43,7 @@ public class SellerController {
         Seller seller = new Seller();
         seller.setName(request.getName());
         seller.setEmail(request.getEmail());
-        seller.setPassword(request.getPassword());
+        seller.setPassword(passwordEncoder.encode(request.getPassword()));
         seller.setStoreName(request.getStoreName());
         seller.setStatus(SellerStatus.PENDING_APPROVAL);
 
@@ -53,7 +59,7 @@ public class SellerController {
 
         Optional<Seller> sellerOpt = sellerRepository.findByEmail(email);
 
-        if (sellerOpt.isEmpty() || !sellerOpt.get().getPassword().equals(password)) {
+        if (sellerOpt.isEmpty() || !passwordEncoder.matches(password, sellerOpt.get().getPassword())) {
             return ResponseEntity.status(401).body("Invalid Credentials");
         }
 
@@ -64,6 +70,7 @@ public class SellerController {
             return ResponseEntity.status(403).body("Login Failed: Your account was rejected.");
         }
 
-        return ResponseEntity.ok("Login Successful.");
+        String token = jwtUtils.generateToken(seller.getEmail());
+        return ResponseEntity.ok(java.util.Map.of("token", token));
     }
 }
