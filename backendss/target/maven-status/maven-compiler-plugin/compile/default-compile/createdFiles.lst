@@ -1,0 +1,6 @@
+com\nexashop\backend\repository\CategoryRepository.class
+com\nexashop\backend\entity\ProductStatus.class
+com\nexashop\backend\service\FileStorageService.class
+com\nexashop\backend\entity\Category.class
+com\nexashop\backend\controller\FileUploadController.class
+com\nexashop\backend\config\WebConfig.class
