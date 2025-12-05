@@ -34,7 +34,7 @@ const ProductFormDialog = ({
         description: '',
         price: '',
         stockQuantity: '',
-        category: '',
+        categoryId: '',
         imageUrl: '',
         status: 'ACTIVE',
     });
@@ -48,7 +48,7 @@ const ProductFormDialog = ({
                 description: product.description || '',
                 price: product.price || '',
                 stockQuantity: product.stockQuantity || '',
-                category: product.category || '',
+                categoryId: product.category?.id || '',
                 imageUrl: product.imageUrl || '',
                 status: product.status || 'ACTIVE',
             });
@@ -58,7 +58,7 @@ const ProductFormDialog = ({
                 description: '',
                 price: '',
                 stockQuantity: '',
-                category: '',
+                categoryId: '',
                 imageUrl: '',
                 status: 'ACTIVE',
             });
@@ -91,6 +91,9 @@ const ProductFormDialog = ({
         }
         if (!formData.stockQuantity || parseInt(formData.stockQuantity) < 0) {
             newErrors.stockQuantity = 'Valid stock quantity is required';
+        }
+        if (!formData.categoryId) {
+            newErrors.categoryId = 'Category is required';
         }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -164,14 +167,26 @@ const ProductFormDialog = ({
                             error={!!errors.stockQuantity}
                             helperText={errors.stockQuantity}
                         />
-                        <TextField
-                            label="Category"
-                            name="category"
-                            value={formData.category}
-                            onChange={handleChange}
-                            fullWidth
-                            placeholder="e.g., Smartphones, Laptops, Clothing"
-                        />
+                        <FormControl fullWidth required error={!!errors.categoryId}>
+                            <InputLabel>Category</InputLabel>
+                            <Select
+                                name="categoryId"
+                                value={formData.categoryId}
+                                label="Category"
+                                onChange={handleChange}
+                            >
+                                {categories.map((cat) => (
+                                    <MenuItem key={cat.id} value={cat.id}>
+                                        {cat.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                            {errors.categoryId && (
+                                <Box sx={{ color: 'error.main', fontSize: '0.75rem', ml: 1.5, mt: 0.5 }}>
+                                    {errors.categoryId}
+                                </Box>
+                            )}
+                        </FormControl>
                         <FormControl fullWidth>
                             <InputLabel>Status</InputLabel>
                             <Select

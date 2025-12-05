@@ -7,7 +7,7 @@ public class ProductRequest {
     private String description;
     private BigDecimal price;
     private Integer stockQuantity;
-    private String category;
+    private Long categoryId;
     private String imageUrl;
     private String status;
 
@@ -43,12 +43,12 @@ public class ProductRequest {
         this.stockQuantity = stockQuantity;
     }
 
-    public String getCategory() {
-        return category;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getImageUrl() {

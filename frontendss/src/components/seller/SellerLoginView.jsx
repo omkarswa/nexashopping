@@ -1,5 +1,6 @@
-import React from 'react';
-import { Box, TextField, Button, Typography, Paper, Alert, CircularProgress } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, TextField, Button, Typography, Paper, Alert, CircularProgress, InputAdornment, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
 const SellerLoginView = ({
@@ -12,6 +13,14 @@ const SellerLoginView = ({
     isError,
     error
 }) => {
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
+
     return (
         <Box sx={{ maxWidth: 450, mx: 'auto', mt: 8 }}>
             <Paper
@@ -49,12 +58,26 @@ const SellerLoginView = ({
                     <TextField
                         fullWidth
                         label="Password"
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         value={password}
                         onChange={(e) => onPasswordChange(e.target.value)}
                         margin="normal"
                         required
                         variant="outlined"
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                        edge="end"
+                                    >
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                     />
 
                     <Button

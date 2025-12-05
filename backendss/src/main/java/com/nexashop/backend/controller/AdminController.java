@@ -22,13 +22,16 @@ public class AdminController {
     private final SellerRepository sellerRepository;
     private final EmailService emailService;
     private final JwtUtils jwtUtils;
+    private final com.nexashop.backend.service.RefreshTokenService refreshTokenService;
 
     public AdminController(AdminAuthService adminAuthService, SellerRepository sellerRepository,
-            EmailService emailService, JwtUtils jwtUtils) {
+            EmailService emailService, JwtUtils jwtUtils,
+            com.nexashop.backend.service.RefreshTokenService refreshTokenService) {
         this.adminAuthService = adminAuthService;
         this.sellerRepository = sellerRepository;
         this.emailService = emailService;
         this.jwtUtils = jwtUtils;
+        this.refreshTokenService = refreshTokenService;
     }
 
     // -------- LOGIN ONLY OPEN ENDPOINT -------- //
@@ -36,7 +39,9 @@ public class AdminController {
     public ResponseEntity<?> loginAdmin(@RequestBody AdminLoginRequest request) {
         if (adminAuthService.validateCredentials(request.getEmail(), request.getPassword())) {
             String token = jwtUtils.generateToken(request.getEmail(), "ROLE_ADMIN");
-            return ResponseEntity.ok(new LoginResponse(token));
+            com.nexashop.backend.entity.RefreshToken refreshToken = refreshTokenService
+                    .createRefreshToken(request.getEmail());
+            return ResponseEntity.ok(new LoginResponse(token, refreshToken.getToken()));
         }
         return ResponseEntity.status(401).body("Invalid Credentials");
     }

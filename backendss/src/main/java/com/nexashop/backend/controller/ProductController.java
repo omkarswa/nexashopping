@@ -1,9 +1,11 @@
 package com.nexashop.backend.controller;
 
 import com.nexashop.backend.dto.ProductRequest;
+import com.nexashop.backend.entity.Category;
 import com.nexashop.backend.entity.Product;
 import com.nexashop.backend.entity.ProductStatus;
 import com.nexashop.backend.entity.Seller;
+import com.nexashop.backend.repository.CategoryRepository;
 import com.nexashop.backend.repository.ProductRepository;
 import com.nexashop.backend.repository.SellerRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,19 +18,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
+@SuppressWarnings("null")
 public class ProductController {
 
     private final ProductRepository productRepository;
     private final SellerRepository sellerRepository;
+    private final CategoryRepository categoryRepository;
 
     public ProductController(ProductRepository productRepository,
-            SellerRepository sellerRepository) {
+            SellerRepository sellerRepository,
+            CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
         this.sellerRepository = sellerRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     private Seller getCurrentSeller() {
@@ -51,7 +56,13 @@ public class ProductController {
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
         product.setStockQuantity(request.getStockQuantity());
-        product.setCategory(request.getCategory());
+
+        if (request.getCategoryId() != null) {
+            Category category = categoryRepository.findById(request.getCategoryId())
+                    .orElse(null);
+            product.setCategory(category);
+        }
+
         product.setImageUrl(request.getImageUrl());
         if (request.getStatus() != null) {
             product.setStatus(ProductStatus.valueOf(request.getStatus().toUpperCase()));
@@ -86,7 +97,7 @@ public class ProductController {
 
         if (category != null && !category.isEmpty()) {
             products = products.stream()
-                    .filter(p -> p.getCategory() != null && p.getCategory().equalsIgnoreCase(category))
+                    .filter(p -> p.getCategory() != null && p.getCategory().getName().equalsIgnoreCase(category))
                     .toList();
         }
 
@@ -132,7 +143,15 @@ public class ProductController {
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
         product.setStockQuantity(request.getStockQuantity());
-        product.setCategory(request.getCategory());
+
+        if (request.getCategoryId() != null) {
+            Category category = categoryRepository.findById(request.getCategoryId())
+                    .orElse(null);
+            product.setCategory(category);
+        } else {
+            product.setCategory(null);
+        }
+
         product.setImageUrl(request.getImageUrl());
         if (request.getStatus() != null) {
             product.setStatus(ProductStatus.valueOf(request.getStatus().toUpperCase()));

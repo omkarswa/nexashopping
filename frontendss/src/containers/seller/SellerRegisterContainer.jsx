@@ -19,6 +19,13 @@ const SellerRegisterContainer = () => {
         e.preventDefault();
         try {
             await registerSeller(formData).unwrap();
+            // Clear form on success
+            setFormData({
+                name: '',
+                email: '',
+                password: '',
+                storeName: '',
+            });
         } catch (err) {
             console.error('Failed to register:', err);
         }

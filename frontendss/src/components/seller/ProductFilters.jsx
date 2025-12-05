@@ -38,7 +38,7 @@ const ProductFilters = ({
                     />
                 </Grid>
                 <Grid item xs={12} md={3}>
-                    <FormControl fullWidth size="small">
+                    <FormControl fullWidth size="small" sx={{ minWidth: 200 }}>
                         <InputLabel>Category</InputLabel>
                         <Select
                             value={category}
@@ -47,8 +47,7 @@ const ProductFilters = ({
                             MenuProps={{
                                 PaperProps: {
                                     style: {
-                                        width: 'auto',
-                                        minWidth: '100%',
+                                        maxHeight: 300,
                                     },
                                 },
                             }}
@@ -63,20 +62,12 @@ const ProductFilters = ({
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} md={3}>
-                    <FormControl fullWidth size="small">
+                    <FormControl fullWidth size="small" sx={{ minWidth: 200 }}>
                         <InputLabel>Status</InputLabel>
                         <Select
                             value={status}
                             label="Status"
                             onChange={(e) => onStatusChange(e.target.value)}
-                            MenuProps={{
-                                PaperProps: {
-                                    style: {
-                                        width: 'auto',
-                                        minWidth: '100%',
-                                    },
-                                },
-                            }}
                         >
                             <MenuItem value="">All Status</MenuItem>
                             <MenuItem value="ACTIVE">Active</MenuItem>

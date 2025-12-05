@@ -18,14 +18,17 @@ public class SellerController {
     private final com.nexashop.backend.service.EmailService emailService;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
     private final com.nexashop.backend.security.JwtUtils jwtUtils;
+    private final com.nexashop.backend.service.RefreshTokenService refreshTokenService;
 
     public SellerController(SellerRepository sellerRepository, com.nexashop.backend.service.EmailService emailService,
             org.springframework.security.crypto.password.PasswordEncoder passwordEncoder,
-            com.nexashop.backend.security.JwtUtils jwtUtils) {
+            com.nexashop.backend.security.JwtUtils jwtUtils,
+            com.nexashop.backend.service.RefreshTokenService refreshTokenService) {
         this.sellerRepository = sellerRepository;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Operation(summary = "Register a new Seller", description = "Creates a new seller account with PENDING_APPROVAL status and sends a verification email.")
@@ -70,6 +73,8 @@ public class SellerController {
         }
 
         String token = jwtUtils.generateToken(seller.getEmail(), "ROLE_SELLER");
-        return ResponseEntity.ok(java.util.Map.of("token", token));
+        com.nexashop.backend.entity.RefreshToken refreshToken = refreshTokenService
+                .createRefreshToken(seller.getEmail());
+        return ResponseEntity.ok(new com.nexashop.backend.dto.LoginResponse(token, refreshToken.getToken()));
     }
 }

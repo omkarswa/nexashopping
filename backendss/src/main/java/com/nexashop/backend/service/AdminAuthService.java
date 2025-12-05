@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdminAuthService {
 
-    private static final String ADMIN_EMAIL = "admin1@nexa.com";
+    private static final String ADMIN_EMAIL = "admin1@nexashop.com";
     private static final String ADMIN_PASSWORD = "admin123";
 
     public boolean validateCredentials(String email, String password) {

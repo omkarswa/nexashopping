@@ -7,6 +7,11 @@ import {
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 
+import LogoutContainer from '../../containers/common/LogoutContainer';
+import LogoutIcon from '@mui/icons-material/Logout';
+
+import CategoryManagement from './CategoryManagement';
+
 const AdminDashboardView = ({
     isLoading,
     sellers,
@@ -22,18 +27,29 @@ const AdminDashboardView = ({
 }) => {
     return (
         <Box>
-            <Typography variant="h4" gutterBottom fontWeight="600" sx={{ mb: 1 }}>
-                Admin Dashboard
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                <Typography variant="h4" fontWeight="600">
+                    Admin Dashboard
+                </Typography>
+                <LogoutContainer>
+                    <Button 
+                        variant="outlined" 
+                        color="error" 
+                        startIcon={<LogoutIcon />}
+                    >
+                        Logout
+                    </Button>
+                </LogoutContainer>
+            </Box>
             <Typography variant="body1" color="text.secondary" sx={{ mb: 5 }}>
-                Manage sellers and oversee platform activity
+                Manage sellers, categories, and oversee platform activity
             </Typography>
 
             <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 4 }}>
                 <Tabs
                     value={tabValue}
                     onChange={onTabChange}
-                    aria-label="seller status tabs"
+                    aria-label="admin dashboard tabs"
                     sx={{
                         '& .MuiTab-root': {
                             textTransform: 'none',
@@ -48,78 +64,96 @@ const AdminDashboardView = ({
                     <Tab label="Pending" />
                     <Tab label="Approved" />
                     <Tab label="Denied" />
+                    <Tab label="Categories" />
                 </Tabs>
             </Box>
 
-            {isLoading ? (
-                <Box display="flex" justifyContent="center" p={8}>
-                    <CircularProgress />
-                </Box>
+            {tabValue === 4 ? (
+                <CategoryManagement />
             ) : (
-                <TableContainer
-                    component={Paper}
-                    elevation={0}
-                    sx={{
-                        border: '1px solid',
-                        borderColor: 'divider',
-                    }}
-                >
-                    <Table>
-                        <TableHead>
-                            <TableRow sx={{ bgcolor: 'action.hover' }}>
-                                <TableCell sx={{ fontWeight: 600, py: 2 }}>Seller Name</TableCell>
-                                <TableCell sx={{ fontWeight: 600, py: 2 }}>Email</TableCell>
-                                <TableCell sx={{ fontWeight: 600, py: 2 }}>Store Name</TableCell>
-                                <TableCell sx={{ fontWeight: 600, py: 2 }}>Status</TableCell>
-                                <TableCell align="right" sx={{ fontWeight: 600, py: 2 }}>Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {sellers.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={5} align="center" sx={{ py: 8 }}>
-                                        <Typography variant="body1" color="text.secondary">
-                                            No sellers found in this category.
-                                        </Typography>
-                                    </TableCell>
+                isLoading ? (
+                    <Box display="flex" justifyContent="center" p={8}>
+                        <CircularProgress />
+                    </Box>
+                ) : (
+                    <TableContainer
+                        component={Paper}
+                        elevation={0}
+                        sx={{
+                            border: '1px solid',
+                            borderColor: 'divider',
+                        }}
+                    >
+                        <Table>
+                            <TableHead>
+                                <TableRow sx={{ bgcolor: 'action.hover' }}>
+                                    <TableCell sx={{ fontWeight: 600, py: 2 }}>Seller Name</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, py: 2 }}>Email</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, py: 2 }}>Store Name</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, py: 2 }}>Status</TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 600, py: 2 }}>Actions</TableCell>
                                 </TableRow>
-                            ) : (
-                                sellers.map((seller) => (
-                                    <TableRow key={seller.id} hover>
-                                        <TableCell sx={{ py: 2.5 }}>
-                                            <Typography variant="body1" fontWeight={500}>{seller.name}</Typography>
+                            </TableHead>
+                            <TableBody>
+                                {sellers.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={5} align="center" sx={{ py: 8 }}>
+                                            <Typography variant="body1" color="text.secondary">
+                                                No sellers found in this category.
+                                            </Typography>
                                         </TableCell>
-                                        <TableCell sx={{ py: 2.5 }}>{seller.email}</TableCell>
-                                        <TableCell sx={{ py: 2.5 }}>{seller.storeName}</TableCell>
-                                        <TableCell sx={{ py: 2.5 }}>
-                                            <Chip
-                                                label={seller.status.replace('_', ' ')}
-                                                sx={{
-                                                    fontWeight: 500,
-                                                    bgcolor: seller.status === 'APPROVED' ? 'success.light' :
-                                                        seller.status === 'DENIED' ? 'error.light' :
-                                                            'warning.light',
-                                                    color: seller.status === 'APPROVED' ? 'success.dark' :
-                                                        seller.status === 'DENIED' ? 'error.dark' :
-                                                            'warning.dark',
-                                                }}
-                                                size="small"
-                                            />
-                                        </TableCell>
-                                        <TableCell align="right" sx={{ py: 2.5 }}>
-                                            {/* Actions for Pending Sellers */}
-                                            {seller.status === 'PENDING_APPROVAL' && (
-                                                <>
-                                                    <Button
-                                                        startIcon={<CheckCircleIcon />}
-                                                        color="success"
-                                                        onClick={() => onApprove(seller.id)}
-                                                        sx={{ mr: 1 }}
-                                                        variant="outlined"
-                                                        size="small"
-                                                    >
-                                                        Approve
-                                                    </Button>
+                                    </TableRow>
+                                ) : (
+                                    sellers.map((seller) => (
+                                        <TableRow key={seller.id} hover>
+                                            <TableCell sx={{ py: 2.5 }}>
+                                                <Typography variant="body1" fontWeight={500}>{seller.name}</Typography>
+                                            </TableCell>
+                                            <TableCell sx={{ py: 2.5 }}>{seller.email}</TableCell>
+                                            <TableCell sx={{ py: 2.5 }}>{seller.storeName}</TableCell>
+                                            <TableCell sx={{ py: 2.5 }}>
+                                                <Chip
+                                                    label={seller.status.replace('_', ' ')}
+                                                    sx={{
+                                                        fontWeight: 500,
+                                                        bgcolor: seller.status === 'APPROVED' ? 'success.light' :
+                                                            seller.status === 'DENIED' ? 'error.light' :
+                                                                'warning.light',
+                                                        color: seller.status === 'APPROVED' ? 'success.dark' :
+                                                            seller.status === 'DENIED' ? 'error.dark' :
+                                                                'warning.dark',
+                                                    }}
+                                                    size="small"
+                                                />
+                                            </TableCell>
+                                            <TableCell align="right" sx={{ py: 2.5 }}>
+                                                {/* Actions for Pending Sellers */}
+                                                {seller.status === 'PENDING_APPROVAL' && (
+                                                    <>
+                                                        <Button
+                                                            startIcon={<CheckCircleIcon />}
+                                                            color="success"
+                                                            onClick={() => onApprove(seller.id)}
+                                                            sx={{ mr: 1 }}
+                                                            variant="outlined"
+                                                            size="small"
+                                                        >
+                                                            Approve
+                                                        </Button>
+                                                        <Button
+                                                            startIcon={<CancelIcon />}
+                                                            color="error"
+                                                            onClick={() => onRejectClick(seller.id)}
+                                                            variant="outlined"
+                                                            size="small"
+                                                        >
+                                                            Reject
+                                                        </Button>
+                                                    </>
+                                                )}
+
+                                                {/* Actions for Approved Sellers (Can be Rejected/Banned) */}
+                                                {seller.status === 'APPROVED' && (
                                                     <Button
                                                         startIcon={<CancelIcon />}
                                                         color="error"
@@ -127,43 +161,30 @@ const AdminDashboardView = ({
                                                         variant="outlined"
                                                         size="small"
                                                     >
-                                                        Reject
+                                                        Reject / Ban
                                                     </Button>
-                                                </>
-                                            )}
+                                                )}
 
-                                            {/* Actions for Approved Sellers (Can be Rejected/Banned) */}
-                                            {seller.status === 'APPROVED' && (
-                                                <Button
-                                                    startIcon={<CancelIcon />}
-                                                    color="error"
-                                                    onClick={() => onRejectClick(seller.id)}
-                                                    variant="outlined"
-                                                    size="small"
-                                                >
-                                                    Reject / Ban
-                                                </Button>
-                                            )}
-
-                                            {/* Actions for Denied Sellers (Can be Re-Approved) */}
-                                            {seller.status === 'DENIED' && (
-                                                <Button
-                                                    startIcon={<CheckCircleIcon />}
-                                                    color="success"
-                                                    onClick={() => onApprove(seller.id)}
-                                                    variant="outlined"
-                                                    size="small"
-                                                >
-                                                    Re-Approve
-                                                </Button>
-                                            )}
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                                {/* Actions for Denied Sellers (Can be Re-Approved) */}
+                                                {seller.status === 'DENIED' && (
+                                                    <Button
+                                                        startIcon={<CheckCircleIcon />}
+                                                        color="success"
+                                                        onClick={() => onApprove(seller.id)}
+                                                        variant="outlined"
+                                                        size="small"
+                                                    >
+                                                        Re-Approve
+                                                    </Button>
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                )
             )}
 
             {/* Rejection Dialog */}
