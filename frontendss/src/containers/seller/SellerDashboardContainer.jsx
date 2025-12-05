@@ -9,6 +9,7 @@ import {
     useUpdateProductStatusMutation,
     useUpdateProductStockMutation,
     useUploadProductImageMutation,
+    useGetCategoriesQuery,
 } from '../../services/api';
 import {
     setSelectedProduct,
@@ -48,6 +49,7 @@ const SellerDashboardContainer = () => {
     const [updateProductStatus] = useUpdateProductStatusMutation();
     const [updateProductStock, { isLoading: isUpdatingStock }] = useUpdateProductStockMutation();
     const [uploadProductImage, { isLoading: isUploadingImage }] = useUploadProductImageMutation();
+    const { data: categories } = useGetCategoriesQuery();
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
@@ -217,6 +219,7 @@ const SellerDashboardContainer = () => {
             totalPages={totalPages}
             totalProducts={totalProducts}
             onPageChange={handlePageChange}
+            categories={categories || []}
         />
     );
 };

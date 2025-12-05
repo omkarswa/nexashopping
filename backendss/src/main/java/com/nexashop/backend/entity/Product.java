@@ -25,7 +25,9 @@ public class Product {
     @Column(nullable = false)
     private Integer stockQuantity;
 
-    private String category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     private String imageUrl;
 
@@ -100,11 +102,11 @@ public class Product {
         this.stockQuantity = stockQuantity;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

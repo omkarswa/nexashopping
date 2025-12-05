@@ -31,6 +31,8 @@ import ProductFormDialog from './ProductFormDialog';
 import ConfirmationModal from '../common/ConfirmationModal';
 import ProductFilters from './ProductFilters';
 import StockUpdateDialog from './StockUpdateDialog';
+import LogoutContainer from '../../containers/common/LogoutContainer';
+import LogoutIcon from '@mui/icons-material/Logout';
 import Avatar from '@mui/material/Avatar';
 
 const SellerDashboardView = ({
@@ -70,18 +72,9 @@ const SellerDashboardView = ({
     totalPages = 0,
     totalProducts = 0,
     onPageChange,
+    categories = [],
 }) => {
-    // Derive unique categories from current products for filter dropdown
-    const derivedCategories =
-        products && products.length
-            ? Array.from(
-                  new Set(
-                      products
-                          .map((p) => p.category)
-                          .filter((c) => c && c.trim().length > 0)
-                  )
-              )
-            : [];
+    // derivedCategories logic removed in favor of passed categories prop
 
     return (
         <Box>
@@ -94,14 +87,26 @@ const SellerDashboardView = ({
                         Manage your products and inventory
                     </Typography>
                 </Box>
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={() => onOpenDialog(null)}
-                    size="large"
-                >
-                    Add Product
-                </Button>
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                    <LogoutContainer>
+                        <Button 
+                            variant="outlined" 
+                            color="error" 
+                            startIcon={<LogoutIcon />}
+                            size="large"
+                        >
+                            Logout
+                        </Button>
+                    </LogoutContainer>
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={() => onOpenDialog(null)}
+                        size="large"
+                    >
+                        Add Product
+                    </Button>
+                </Box>
             </Box>
 
             <Grid container spacing={3} sx={{ mb: 5 }}>
@@ -187,7 +192,7 @@ const SellerDashboardView = ({
                 search={filters?.search || ''}
                 category={filters?.category || ''}
                 status={filters?.status || ''}
-                categories={derivedCategories}
+                categories={categories}
                 onSearchChange={onSearchChange}
                 onCategoryChange={onCategoryChange}
                 onStatusChange={onStatusChange}
@@ -272,7 +277,12 @@ const SellerDashboardView = ({
                                             </TableCell>
                                             <TableCell>
                                                 {product.category ? (
-                                                    <Chip label={product.category} size="small" />
+                                                    <Chip 
+                                                        label={product.category.name || product.category} 
+                                                        size="small" 
+                                                        variant="outlined"
+                                                        color="primary"
+                                                    />
                                                 ) : (
                                                     <Typography variant="body2" color="text.secondary">
                                                         -
@@ -310,7 +320,7 @@ const SellerDashboardView = ({
                                                     size="small"
                                                     onClick={() => onStatusToggle(product)}
                                                     icon={product.status === 'ACTIVE' ? <ToggleOnIcon /> : <ToggleOffIcon />}
-                                                    sx={{ cursor: 'pointer' }}
+                                                    sx={{ cursor: 'pointer', minWidth: 100, justifyContent: 'flex-start' }}
                                                 />
                                             </TableCell>
                                             <TableCell align="right">
@@ -391,6 +401,7 @@ const SellerDashboardView = ({
                 error={operationError}
                 onImageUpload={onImageUpload}
                 imageUploadLoading={imageUploadLoading}
+                categories={categories}
             />
 
             <StockUpdateDialog

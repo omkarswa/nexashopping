@@ -54,6 +54,8 @@ const AdminDashboardContainer = () => {
                 return allSellers.filter(s => s.status === 'APPROVED');
             case 3: // Denied
                 return allSellers.filter(s => s.status === 'DENIED');
+            case 4: // Categories
+                return [];
             default:
                 return allSellers;
         }
