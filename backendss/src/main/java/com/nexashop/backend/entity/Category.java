@@ -15,10 +15,6 @@ public class Category {
 
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    private Category parentCategory;
-
     public Category() {
     }
 
@@ -52,13 +48,4 @@ public class Category {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public Category getParentCategory() {
-        return parentCategory;
-    }
-
-    public void setParentCategory(Category parentCategory) {
-        this.parentCategory = parentCategory;
-    }
 }
-

@@ -1,7 +1,6 @@
 package com.nexashop.backend.controller;
 
 import com.nexashop.backend.entity.Seller;
-import com.nexashop.backend.entity.SellerStatus;
 import com.nexashop.backend.repository.SellerRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -45,7 +44,7 @@ public class SellerController {
         seller.setEmail(request.getEmail());
         seller.setPassword(passwordEncoder.encode(request.getPassword()));
         seller.setStoreName(request.getStoreName());
-        seller.setStatus(SellerStatus.PENDING_APPROVAL);
+        seller.setStatus(Seller.SellerStatus.PENDING_APPROVAL);
 
         Seller savedSeller = sellerRepository.save(seller);
         emailService.sendVerificationEmail(savedSeller);
@@ -64,13 +63,13 @@ public class SellerController {
         }
 
         Seller seller = sellerOpt.get();
-        if (seller.getStatus() == SellerStatus.PENDING_APPROVAL) {
+        if (seller.getStatus() == Seller.SellerStatus.PENDING_APPROVAL) {
             return ResponseEntity.status(403).body("Login Failed: Please wait for Admin Approval.");
-        } else if (seller.getStatus() == SellerStatus.DENIED) {
+        } else if (seller.getStatus() == Seller.SellerStatus.DENIED) {
             return ResponseEntity.status(403).body("Login Failed: Your account was rejected.");
         }
 
-        String token = jwtUtils.generateToken(seller.getEmail());
+        String token = jwtUtils.generateToken(seller.getEmail(), "ROLE_SELLER");
         return ResponseEntity.ok(java.util.Map.of("token", token));
     }
 }
